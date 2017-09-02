@@ -1,0 +1,9 @@
+
+> server@0.0.0 start /home/pi/workspaces/nodejs/project/project_test/server
+> node ./bin/www
+
+[0mGET / [36m304 [0m87.855 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m10.778 ms - -[0m
+[0mGET / [36m304 [0m15.532 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m3.319 ms - -[0m
+[0mGET / [31m500 [0m38.177 ms - 1598[0m
