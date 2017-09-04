@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-var info = require('../.db_config.json');
+var info = require('../ignore/.db_config.json');
 
 var queryOption = {"select":0, "insert":1, "update":2, "remove":3};
 
