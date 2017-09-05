@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=divice-width, height=device-height">
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/js/jquery.min.js"></script>
+	<script>
+		$(function(){
+			$("#btnRegist").click(function(){
+				$("#requestForm").attr("action", "/regist");
+				$("#requestForm").submit();
+			});
+
+			$("#btnLogin").click(function(){
+				if(validationCheck() == true){
+					$("requestForm").attr("action", "/login");
+					$("requestForm").submit();
+				}
+			});
+
+			function validationCheck(){
+				if($("#id_text").val() == "" || $("#pw_text").val() == ""){
+					alert("입력 누락");
+					return false;
+				}else if($("#id_text").val().length < 5 || $("#pw_text").val().length < 5){
+					alert("5자 이상");
+					return false;
+				}else{
+					return true;
+				}
+			}
+		});
+	</script>
   </head>
   <body>
-    <h1>이름</h1>
-    <input type="text" name="id" size=20 maxlength=12/> <br/><br/>
-	<input type="button" name="submit" text="접속"/>
+	<form id="requestForm" action="" method="post">
+    		<h3>Name</h3>
+    		<input type="text" name="id_text" size=40 maxlength=20/> <br/><br/>
+	
+		<h3>Password</h3>
+		<input type="text" name="pw_text" size=40 maxlength=40/> <br/><br/>
+		<input type="button" id="btnRegist"  name="join" value="가입"/> &nbsp;&nbsp;&nbsp;
+		<input type="button" id="btnLogin" name="login" value="접속"/>
+	</form>
   </body>
 </html>

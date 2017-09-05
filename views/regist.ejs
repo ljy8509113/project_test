@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+	<head>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height">
+		<title></title>
+		<link rel='stylesheet' href='/stylesheets/style.css'/>
+		<style>
+			ul{
+				list-style:none;
+				padding-left:0px;
+				width:600px;
+			}
+
+			ul li{
+				float:left;
+				margin-top:10xp;
+				margin-bottom:100px;
+			}
+
+			.li_title{
+				width:20%;
+			}
+			
+			.li_body{
+				width:80%;
+			}
+
+			.li_button{
+				margin-top:30px;
+				margin-right:10px;
+			}
+		</style>
+		<script src="/js/jquery.min.js"></script>
+		<script>
+			$(function(){
+				$("#btnRegist").click(function(){
+					if(validationCheck() == true){
+						$("#requestForm").attr("action","/regist");
+						$("#requestForm").submit();
+					}
+				});
+				$("#btnCancel").click(function(){
+					window.history.back();
+				});
+				function validationCheck(){
+					if($("#id_text").val() == "" || $("pw_text").val() == ""){
+						alert("아이디 패스워드 입력해야지");
+						return false;
+					}else if($("#id_text").val().length < 5 || $("#pw_text").val().length < 5){
+						alert("5글자 이상은 입력하자");						
+						return false;
+					}else{
+						return true;
+					}
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<form id="requestForm" action="" method="post">
+			<div class="table">
+				<ul>
+					<li class="li_title">Name</li>
+					<li class="li_body"><input type="text" id="id_text" name="name" maxlength=20 /> </li>
+				</ul>
+				<ul>
+					<li class="li_title">Password</li>
+					<li class="li_body"><input type="password" id="pw_text" name="password" maxlength=40/></li>
+				</ul>
+				<ul>
+					<li class="li_title">빗썸 cert key</li>
+					<li class="li_body"><input type="text" id="bitsum_cert" name="bitsum_cert" maxlength=200 /></li>
+				</ul>
+				<ul>
+					<li class="li_title">빗썸 api key</li>
+					<li class="li_body><input type="text" id="bitsum_api" name="bitsum_api" maxlength=200 /></li>
+				</ul>
+				<ul>
+					<li class="li_button"><input type="button" id="btnRegist" name="regist" value="등록"></li>
+					<li class="li_button"><input type="button" id="btnCancel" name="cancel" value="취소"></li>
+				</ul>
+			</div>
+		</form>
+	</body>
+</html>
