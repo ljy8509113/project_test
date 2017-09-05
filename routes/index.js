@@ -1,15 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
-//var main = require('./main');
+
 
 /* GET home page. */
 router.all('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
-});
-
-router.post('/user_info',function(req,res){
-	var result = require('./user_info').setData(req,res);
 });
 
 router.post('/login',function(req, res){
@@ -34,18 +30,38 @@ function login(req, res){
 			res.render('error',{error:err});
 		}else{
 			if(result == ''){
-				var errorValue = new Error();
-				errorValue.status = "NOT FOUND";
-				errorValue.stack = "아이디가 존재하지 않습니다.";
-				res.render('error', {error:errorValue});
+				var msg = "아이디가 존재하지 않습니다.";
+				res.send({isSuccess:true,msg:msg});
 			}else{
-				if(req.password == result.password){
-//					res.render('main');
+				if(pw == result[0].password && result[0].fail_password_cnt < 10){
+					query = "fail_password_cnt=0";
+					dbManager.updateQuery('users', query, function(err, result){
+						if(err){
+							res.render('error',{error:err});
+						}else{
+							res.send({isSuccess:true, name:name, password:pw});
+						}
+					});
 				}else{
-					var errorValue = new Error();
-					errorValue.status = "Different PASSWORD";
-					errorValue.stack = "패스워드가 다름.";
-					res.render('error', {error:errorValue});
+					var failCnt = result[0].fail_password_cnt;
+					var msg = "";
+
+					if(failCnt < 10){
+						failCnt += 1;
+
+						query = "fail_password_cnt="+failCnt;
+						dbManager.updateQuery('users', query, function(err, result){
+							if(err){
+								res.render('error',{error:err});
+							}else{
+								msg = "패스워드가 다름 " + failCnt + "/10";
+								res.send({isSuccess:false, msg:msg});
+							}
+						});
+					}else{
+						msg = "패스워드 10번 틀림. 관리자에게 문의 바람.";
+						res.send({isSuccess:false, msg:msg});
+					}
 				}
 			}
 		}
