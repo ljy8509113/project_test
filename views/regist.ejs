@@ -34,7 +34,7 @@
 			$(function(){
 				$("#btnRegist").click(function(){
 					if(validationCheck() == true){
-						$("#requestForm").attr("action","/regist");
+						$("#requestForm").attr("action","/regist_data");
 						$("#requestForm").submit();
 					}
 				});
@@ -67,11 +67,11 @@
 					<li class="li_body"><input type="password" id="pw_text" name="password" maxlength=40/></li>
 				</ul>
 				<ul>
-					<li class="li_title">빗썸 cert key</li>
+					<li class="li_title">bitsum cert key</li>
 					<li class="li_body"><input type="text" id="bitsum_cert" name="bitsum_cert" maxlength=200 /></li>
 				</ul>
 				<ul>
-					<li class="li_title">빗썸 api key</li>
+					<li class="li_title">bitsum api key</li>
 					<li class="li_body"><input type="text" id="bitsum_api" name="bitsum_api" maxlength=200 /></li>
 				</ul>
 				<ul>

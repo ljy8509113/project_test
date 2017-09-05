@@ -23,7 +23,7 @@ exports.selectQuery = function(query, callback){
 }
 
 exports.insertQuery = function(tableName, value, callback){
-	var query = "INSERT INTO " + tableName + " SET " + value;
+	var query = "INSERT INTO " + tableName + " ("+value[0] +") VALUES ("+ value[1] + ");" ;
 	requestQuery(query, queryOption.insert, callback);
 }
 
@@ -39,13 +39,17 @@ exports.deleteQuery = function(tableName, strQuery, callback){
 
 var requestQuery = function(query, option, callback){
 	var keys = Object.keys(queryOption);
+	var error;
 	connection.query(query, function(err, result){
 		if(err){
+			error = Error();
+			error.status = err.code;
+			error.stack = err.sqlMessage;
 			console.log('query err option : ' + keys[option] + ' && ' + JSON.stringify(err));
+			return callback(error, result);
 		}else{
 			console.log('query option : ' + keys[option] + ' && ' + JSON.stringify(result) );
+			return callback(err, result);
 		}
-
-		return callback(err, result);
 	});
 }

@@ -1,6 +1,33 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
-<br/><br/>
-<a herf="javascript:history.back()">뒤로 가기 </a>
-
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width, height=device-height">
+		<style>
+			div, ul, li{
+				width:100%;
+			}
+			ul{
+				list-style:none;
+				padding-left:0px;
+				margin-bottom:10px;
+			}
+			li{
+				margin-left:20px;
+				margin-right:20px;			
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<ul>
+				<li><%= error.status %></li>
+			</ul>
+			<ul>
+				<li><%= error.stack %></li>
+			</ul>
+			<ul>
+				<li><a href="javascript:history.back()">뒤로 가기 </a></li>
+			</ul>
+		</div>
+	</body>
+</html>

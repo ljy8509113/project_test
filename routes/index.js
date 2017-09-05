@@ -20,28 +20,32 @@ router.post('/regist', function(req, res){
 	res.render('regist', {title:'회원가입'});
 });
 
+router.post('/regist_data', function(req, res){
+	regist(req, res);
+});
+
 function login(req, res){
 	var name = req.body.name;
 	var pw = req.body.password;
 
 	var query = "SELECT * FROM users WHERE name='" + name + "'";
 	dbManager.selectQuery(query, function(err, result){
-		if(err){
-			res.render('error',{message:JSON.stringify(err), error:err});
+		if(err){ 
+			res.render('error',{error:err});
 		}else{
 			if(result == ''){
 				var errorValue = new Error();
 				errorValue.status = "NOT FOUND";
-				errorValue.stack = "";
-				res.render('error', {message:'아이디가 존재하지 않습니다. ',error:errorValue});
+				errorValue.stack = "아이디가 존재하지 않습니다.";
+				res.render('error', {error:errorValue});
 			}else{
 				if(req.password == result.password){
 //					res.render('main');
 				}else{
 					var errorValue = new Error();
-					errorValue.status = "";
-					errorValue.stack = "";
-					res.render('error', {message:'패스워드 불일치.'});
+					errorValue.status = "Different PASSWORD";
+					errorValue.stack = "패스워드가 다름.";
+					res.render('error', {error:errorValue});
 				}
 			}
 		}
@@ -57,22 +61,23 @@ function regist(req, res){
 	var query = "SELECT * FROM users WHERE name='" + name + "'";
 	dbManager.selectQuery(query, function(err, result){
 		if(err){
-			res.render('error', {message:JSON.stringify(err), error:err});
+			res.render('error', {error:err});
 		}else{
 			if(result == ''){
-				var insert = "name='"+name+"' password='"+pw+"' bit_cer_key='"+bit_cert+"' bit_api_key='"+bit_api+"'";
+//				var insert = "name='"+name+"' password='"+pw+"' bit_cer_key='"+bit_cert+"' bit_api_key='"+bit_api+"'";
+				var insert = ["name,password,bit_cer_key,bit_api_key",name+","+pw+","+bit_cert+","+bit_api];
 				dbManager.insertQuery('users', insert, function(err, result){
 					if(err){
-						res.render('error', {message:JSON.stringify(err), error:err});
+						res.render('error', { error:err});
 					}else{
 //						res.render('main');
 					}
 				});
 			}else{
 				var errorValue = new Error();
-				errorValue.status = "중복";
-				errorValue.stack = "";
-				res.render("error", {message:'아이디가 존재합니다.', error:errorValue});
+				errorValue.status = "Overlap ID";
+				errorValue.stack = "아이디가 존재합니다.";
+				res.render("error", {error:errorValue});
 			}
 		}
 	});
