@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
-var main = require('./main');
+//var main = require('./main');
 
 /* GET home page. */
 router.all('/', function(req, res, next) {
@@ -36,7 +36,7 @@ function login(req, res){
 				res.render('error', {message:'아이디가 존재하지 않습니다. ',error:errorValue});
 			}else{
 				if(req.password == result.password){
-					res.render('main');
+//					res.render('main');
 				}else{
 					var errorValue = new Error();
 					errorValue.status = "";
@@ -65,7 +65,7 @@ function regist(req, res){
 					if(err){
 						res.render('error', {message:JSON.stringify(err), error:err});
 					}else{
-						res.render('main');
+//						res.render('main');
 					}
 				});
 			}else{
