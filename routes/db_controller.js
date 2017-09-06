@@ -23,7 +23,7 @@ exports.selectQuery = function(query, callback){
 }
 
 exports.insertQuery = function(tableName, value, callback){
-	var query = "INSERT INTO " + tableName + " ("+value[0] +") VALUES ("+ value[1] + ");" ;
+	var query = "INSERT INTO " + tableName + value ;
 	requestQuery(query, queryOption.insert, callback);
 }
 

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
+var mysql = require('mysql');
 
 
 /* GET home page. */
@@ -80,8 +81,8 @@ function regist(req, res){
 			res.render('error', {error:err});
 		}else{
 			if(result == ''){
-//				var insert = "name='"+name+"' password='"+pw+"' bit_cer_key='"+bit_cert+"' bit_api_key='"+bit_api+"'";
-				var insert = ["name,password,bit_cer_key,bit_api_key",name+","+pw+","+bit_cert+","+bit_api];
+//				var insert = "name='"+name+"' password='"+pw+"' bit_cer_key='"+bit_cert+"' bit_api_key='"+bit_api+"'"; 
+				var insert = "(name, password, bit_cer_key, bit_api_key) VALUE ('" + name + "', '" + pw + "','" + bit_cert + "','" + bit_api + "')";
 				dbManager.insertQuery('users', insert, function(err, result){
 					if(err){
 						res.render('error', { error:err});
