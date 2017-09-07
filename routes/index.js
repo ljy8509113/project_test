@@ -24,10 +24,10 @@ router.post('/regist_data', function(req, res){
 });
 
 function login(req, res){
-	var name = req.body.name;
+	var user_id = req.body.user_id;
 	var pw = req.body.password;
 
-	var query = "SELECT * FROM users WHERE name='" + name + "'";
+	var query = "SELECT * FROM users WHERE user_id='" + user_id + "'";
 	dbManager.selectQuery(query, function(err, result){
 		if(err){ 
 			res.render('error',{error:err});
@@ -42,7 +42,7 @@ function login(req, res){
 						if(err){
 							res.render('error',{error:err});
 						}else{
-							res.send({isSuccess:true, name:name, password:pw});
+							res.send({isSuccess:true, user_id:user_id, password:pw});
 						}
 					});
 				}else{
@@ -72,25 +72,37 @@ function login(req, res){
 }
 
 function regist(req, res){
-	var name = req.body.name;
+	var user_id = req.body.user_id;
 	var pw = req.body.password;
 	var user_name = req.body.user_name;
-	var bit_cert = makeString(user_name, name, req.body.bitsum_cert);
-	var bit_api = makeString(user_name, name, req.body.bitsum_api);
+	var bit_cert = makeString(user_name, user_id, req.body.bitsum_cert);
+	var bit_api = makeString(user_name, user_id, req.body.bitsum_api);
 
-	var query = "SELECT * FROM users WHERE name='" + name + "'";	
+	var date = new Date();
+	var s_key = makeString('^*A', user_id, date.toDateString());
+
+	var query = "SELECT * FROM users WHERE user_id='" + user_id + "'";
 	dbManager.selectQuery(query, function(err, result){
 		if(err){
 			res.render('error', {error:err});
 		}else{
 			if(result == ''){
-//				var insert = "name='"+name+"' password='"+pw+"' bit_cer_key='"+bit_cert+"' bit_api_key='"+bit_api+"'"; 
-				var insert = "(name, password, bit_cer_key, bit_api_key, user_name) VALUE ('" + name + "', '" + pw + "','" + bit_cert + "','" + bit_api + "','" + user_name + "')";
+				var values = [user_id.toString(), pw.toString(), bit_cert.toString(), bit_api.toString(), user_name.toString(), s_key.toString()];
+				var valuesString = '';
+
+				for(var i=0; i<values.length; i++ ){
+					if((values.length - 1) == i){
+						valuesString += "'" + values[i] + "'";
+					}else{
+						valuesString += "'" + values[i] + "',";
+					}
+				}
+				var insert = "(user_id, password, bit_cer_key, bit_api_key, user_name, s_key) VALUE ("+valuesString +")";
 				dbManager.insertQuery('users', insert, function(err, result){
 					if(err){
 						res.render('error', { error:err});
 					}else{
-						main.initMain(req, res, name, true);
+						main.initMain(req, res, user_id, true);
 					}
 				});
 			}else{
