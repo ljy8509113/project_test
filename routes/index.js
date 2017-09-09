@@ -23,6 +23,11 @@ router.post('/regist_data', function(req, res){
 	regist(req, res);
 });
 
+router.post('/main', function(req, res){
+	var user_id = req.body.user_id;
+	main.initMain(req, res, user_id, false);
+});
+
 function login(req, res){
 	var user_id = req.body.user_id;
 	var pw = req.body.password;
@@ -36,15 +41,19 @@ function login(req, res){
 				var msg = "아이디가 존재하지 않습니다.";
 				res.send({isSuccess:true,msg:msg});
 			}else{
-				if(pw == result[0].password && result[0].fail_password_cnt < 10){
-					query = "fail_password_cnt=0";
-					dbManager.updateQuery('users', query, function(err, result){
-						if(err){
-							res.render('error',{error:err});
-						}else{
-							res.send({isSuccess:true, user_id:user_id, password:pw});
-						}
-					});
+				if(pw == result[0].password){
+					if(result[0].fail_password_cnt > 0){
+						query = "fail_password_cnt=0";
+						dbManager.updateQuery('users', query, function(err, result){
+							if(err){
+								res.render('error',{error:err});
+							}else{
+								res.send({isSuccess:true, user_id:user_id, password:pw});
+							}
+						});
+					}else{
+						res.send({isSuccess:true, user_id:user_id, password:pw});
+					}
 				}else{
 					var failCnt = result[0].fail_password_cnt;
 					var msg = "";
