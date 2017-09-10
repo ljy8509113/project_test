@@ -1,4 +1,84 @@
 <!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width, height=device-height">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/js/jquery.min.js"></script>
 
+		<style>
+			div ul {
+			clear: left;
+			margin: 0;
+			padding :0;
+			list-style-type: none;
+			width:90%;
+			margin-left: 5%;
+			}
+
+			ul.header li {
+				float: left;
+				font-weight:bold;
+				border-left: 1px solid #000;
+				border-top: 1px solid #000;
+				border-bottom: 1px solid #000;
+				height: 30px;
+				text-align: center;
+			}
+
+			ul.body li {
+				float: left;
+				margin: 0;
+				padding: 0;
+				border-left: 1px solid #000;
+				border-bottom: 1px solid #000;
+				height: 30px;
+			}
+
+			ul li.end {
+				border-right: 1px solid #000;
+			}
+
+			.money{
+				text-align: right;
+			}
+
+			.body_data {
+				text-align: center;
+			}
+
+		</style>
+		<script type="text/javascript">
+			function onButton(button_id){
+				console.log('on button : ' + button_id);
+			}
+		</script>
+	</head>
+
+	<body>
+		<div>
+			<ul class="header">
+				<li style="width:11%;">코인명</li>
+				<li style="width:22%;">현제가격</li>
+				<li style="width:22%;">구매가</li>
+				<li style="width:22%;">판매가</li>
+				<li style="width:8%;">auto</li>
+				<li class="end" style="width:10%;">설정</li>
+			</ul>
+			<% for(var i=0; i<coinNames.length; i++){ %>
+				<ul class="body">
+					<li class="body_data" style="width:11%;"><%= coinNames[i] %></li>
+					<li class="money" style="width:22%;">현제가격 &nbsp;&nbsp;</li>
+					<li class="money" style="width:22%;">구매가 &nbsp;&nbsp;</li>
+					<li class="money" style="width:22%;">판매가 &nbsp;&nbsp;</li>
+					<li class="body_data" style="width:8%;">
+						<input type="checkbox" name="chk_info">
+					</li>
+					<li class="end body_data" style="width:10%;">
+						<input type="button" id=<%= coinNames[i] %> value="save" onclick="onButton(this.id)">
+					</li>
+				</ul>
+			<% } %>
+		</div>
+	</body>	
 </html>
 

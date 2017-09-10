@@ -21,8 +21,8 @@
 						dataType:"json",
 						success:function(result){
 							if(result['isSuccess']==true){
-								$("requestForm").attr("action", "/main");
-								$("requestForm").submit();
+								$("#requestForm").attr("action", "/main");
+								$("#requestForm").submit();
 							}else{
 								alert(result['msg']);
 							}
@@ -48,7 +48,7 @@
   <body>
 	<form id="requestForm" action="" method="post">
 		<h3>Name</h3>
-		<input type="text" id="id_text" name="id_text" size=40 maxlength=20/> <br/><br/>
+		<input type="text" id="id_text" name="user_id" size=40 maxlength=20/> <br/><br/>
 	
 		<h3>Password</h3>
 		<input type="password" id="pw_text" name="pw_text" size=40 maxlength=40/> <br/><br/>
