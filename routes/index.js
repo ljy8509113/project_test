@@ -23,8 +23,9 @@ router.post('/regist_data', function(req, res){
 	regist(req, res);
 });
 
-router.post('/main', function(req, res){
-	var user_id = req.body.user_id;
+router.all('/main', function(req, res){
+	//var user_id = req.body.user_id;
+	var user_id = "test123";
 	main.initMain(req, res, user_id, false);
 });
 
