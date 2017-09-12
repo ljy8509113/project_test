@@ -11,8 +11,12 @@
 			margin: 0;
 			padding :0;
 			list-style-type: none;
-			width:90%;
-			margin-left: 5%;
+			width:100%;
+			margin-left: 10px;
+			}
+			
+			ul li{
+				float:left;
 			}
 
 			ul.header li {
@@ -23,6 +27,7 @@
 				border-bottom: 1px solid #000;
 				height: 30px;
 				text-align: center;
+				margin-top:20px;
 			}
 
 			ul.body li {
@@ -56,29 +61,45 @@
 
 	<body>
 		<div>
+			<% if( data.getBitCert() != null || data.getBitCert() == 'undefined' || data.getBitApi() != null || data.getBitApi() == 'undefined' ){ %>
+				<% if( data.getBitCert() != null || data.getBitCert() == 'undefined'){ %>
+					<ul>
+						<li style='width:15%;'>cert key 등록 &nbsp;&nbsp;&nbsp;</li>
+						<li style='width:60%;'><input type="text" name="text_cert"></li>
+					</ul>	
+				<% } %>
+				<% if( data.getBitApi() != null ||  data.getBitApi() == 'undefined' ){ %>
+					<ul>
+						<li style='width:15%;'>api key 등록 &nbsp;&nbsp;&nbsp;</li>
+						<li style='width:60%;'><input type="text" name="text_api"></li>
+					</ul>
+				<% } %>
+				<ul>
+					<li><input type="button" id="on_save_key" onclick="onSaveKey();" value="저장"></li>
+				</ul>
+			<% } %>	
+			
 			<ul class="header">
-				<li style="width:11%;">코인명</li>
-				<li style="width:22%;">현제가격</li>
-				<li style="width:22%;">구매가</li>
-				<li style="width:22%;">판매가</li>
-				<li style="width:8%;">auto</li>
+				<li style="width:13%;">코인명</li>
+				<li style="width:24%;">현제가격</li>
+				<li style="width:24%;">구매가(auto)</li>
+				<li style="width:24%;">판매가(auto)</li>
 				<li class="end" style="width:10%;">설정</li>
 			</ul>
-			<% for(var i=0; i<coinNames.length; i++){ %>
+			<% for(var i=0; i<arrayPrice.length; i++){ %>
 				<ul class="body">
-					<li class="body_data" style="width:11%;"><%= coinNames[i] %></li>
-					<li class="money" style="width:22%;">현제가격 &nbsp;&nbsp;</li>
-					<li class="money" style="width:22%;">구매가 &nbsp;&nbsp;</li>
-					<li class="money" style="width:22%;">판매가 &nbsp;&nbsp;</li>
-					<li class="body_data" style="width:8%;">
-						<input type="checkbox" name="chk_info">
-					</li>
+					<li class="body_data" style="width:13%;"><%= arrayPrice[i].getCoinNameKor() %></li>
+					<li class="money" style="width:24%;"><%= Number(arrayPrice[i].getPrice()).toLocaleString('en') %> &nbsp;&nbsp;</li>
+					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuy() %>"> &nbsp;&nbsp;</li>
+					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSell() %>"> &nbsp;&nbsp;</li>
 					<li class="end body_data" style="width:10%;">
-						<input type="button" id=<%= coinNames[i] %> value="save" onclick="onButton(this.id)">
+						<input type="button" id=<%= arrayPrice[i].getCoinName() %> value="save" onclick="onButton(this.id)">
 					</li>
+					
 				</ul>
 			<% } %>
 		</div>
 	</body>	
 </html>
+
 

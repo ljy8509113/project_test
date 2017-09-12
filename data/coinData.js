@@ -1,10 +1,11 @@
-
+var common = require('./common');
 
 function coinData(coinName, price, time){
 	this.coinName = coinName;
 	this.price =  price;
 	this.time = time;
 	this.keyTime = makeKeyTime(time);
+	this.coinNameKor = getKorName(coinName);
 }
 var proto = coinData.prototype;
 
@@ -13,6 +14,10 @@ function makeKeyTime(time){
 	console.log('key : ' + key);
 	return key;
 };
+
+function getKorName(coinName){
+	return common.getCoinName(coinName);
+}
 
 proto.setCoinName = function(coinName){
 	this.coinName = coinName;
@@ -46,6 +51,14 @@ proto.getKeyTime = function(){
 	return this.keyTime;
 };
 
+proto.setCoinNameKor = function(coinNameKor){
+	this.coinNameKor = coinNameKor;
+};
+
+proto.getCoinNameKor = function(){
+	return this.coinNameKor;
+};
+
 proto.getInsertQuery = function(){
 	return"(coin_name, time, price, key_time) VALUE ('" + this.coinName.toString() + "', " + this.time + ", "+ this.price + ", " + this.keyTime + ")";
 };
@@ -55,3 +68,4 @@ proto.getUpdateQuery = function(){
 };
 
 module.exports = coinData;
+

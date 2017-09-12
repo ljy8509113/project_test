@@ -1,5 +1,5 @@
 exports.getCoinName = function(coin){
-	if(coin == "BTC"){
+	if(coin.toUpperCase() == "BTC"){
 		return "비트코인";
 	}else if(coin == "ETH"){
 		return "이더리움";
@@ -24,4 +24,5 @@ exports.getCoinCodeList = function(){
 	var array = ["BTC", "ETH", "DASH", "LTC", "ETC", "XRP", "BCH", "XMR"]; 
 	return array;
 }
+
 

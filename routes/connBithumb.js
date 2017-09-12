@@ -48,33 +48,34 @@ exports.requestCoinPrice = function(arrayCoin, isSave, callback){
 	        							query = coin.getInsertQuery();
 	        							dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
 	        								if(err){
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length);
+	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
 	        								}else{
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length);
+	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
 	        								}
 	        							});
 	        						}else{
 	        							query = coin.getUpdateQuery();
 	        							dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
 	        								if(err){
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length);
+	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
 	        								}else{
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length);
+	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
 	        								}
 	        							});
 	        						}
 	        					}
 	        				});
-	        			}else{
-	        				
 	        			}
-	        			
 	        		}
 	        	}
 	        	
-	        	return(null, "success");
+	        	if(!isSave){
+	        		console.log('arrayResult : ' + arrayResult);
+	        		return callback(null, arrayResult);
+	        	}
+	        	
 		    }else{
-		    	return(error, "fail");	
+		    	return callback(error, "fail");	
 		    }
 		    
 	        
@@ -82,9 +83,9 @@ exports.requestCoinPrice = function(arrayCoin, isSave, callback){
 	});
 }
 
-function resultCheck(arrayResult, current, end){
+function resultCheck(arrayResult, current, end, callback){
 	if(end == current){
-		return arrayResult;
+		return callback(null, arrayResult);
 	}
 }
 
@@ -104,3 +105,4 @@ function resultCheck(arrayResult, current, end){
 //        "date"          : 1417141032622
 //    }
 //}
+
