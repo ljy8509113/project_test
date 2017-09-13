@@ -1,9 +1,9 @@
 var dbManager = require('../routes/db_controller');
 var userList;
 
-function userInfo(userId, bitCert, bitApi, autoSettingList, userName){
+function userInfo(userId, bitSecret, bitApi, autoSettingList, userName){
 	this.userId = userId;
-	this.bitCert = bitCert;
+	this.bitSecret = bitSecret;
 	this.bitApi = bitApi;
 	this.autoSettingList =  autoSettingList;
 	this.userName = userName;
@@ -19,12 +19,12 @@ proto.getUserId = function(){
 	return this.userId;
 };
 
-proto.setBitCert = function(bitCert){
-	this.bitCert = bitCert;
+proto.setBitSecret = function(bitSecret){
+	this.bitSecret = bitSecret;
 };
 
-proto.getBitCert = function(){
-	return this.bitCert;
+proto.getBitSecret = function(){
+	return this.bitSecret;
 };
 
 proto.setBitApi = function(bitApi){
@@ -85,7 +85,7 @@ exports.getUserInfo = function(){
 			return null;
 		}else{
 			for(var i=0; i<result.length; i++){
-				var userData = new userInfo(result[i].user_id, result[i].bit_cer_key, result[i].bit_api_key, result[i].auto_setting_list, result[i].user_name);
+				var userData = new userInfo(result[i].user_id, result[i].bit_secret_key, result[i].bit_api_key, result[i].auto_setting_list, result[i].user_name);
 				userList.push(userData);
 			}
 
@@ -106,4 +106,5 @@ exports.updateUserData = function(userData){
 }
 
 module.exports = userInfo;
+
 

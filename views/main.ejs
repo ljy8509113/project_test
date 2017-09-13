@@ -61,14 +61,14 @@
 
 	<body>
 		<div>
-			<% if( data.getBitCert() != null || data.getBitCert() == 'undefined' || data.getBitApi() != null || data.getBitApi() == 'undefined' ){ %>
-				<% if( data.getBitCert() != null || data.getBitCert() == 'undefined'){ %>
+			<% if( data.getBitSecret() == null || data.getBitSecret() == 'undefined' || data.getBitApi() == null || data.getBitApi() == 'undefined' ){ %>
+				<% if( data.getBitSecret() == null || data.getBitSecret() == 'undefined'){ %>
 					<ul>
-						<li style='width:15%;'>cert key 등록 &nbsp;&nbsp;&nbsp;</li>
-						<li style='width:60%;'><input type="text" name="text_cert"></li>
+						<li style='width:15%;'>secret key 등록 &nbsp;&nbsp;&nbsp;</li>
+						<li style='width:60%;'><input type="text" name="text_secret"></li>
 					</ul>	
 				<% } %>
-				<% if( data.getBitApi() != null ||  data.getBitApi() == 'undefined' ){ %>
+				<% if( data.getBitApi() == null ||  data.getBitApi() == 'undefined' ){ %>
 					<ul>
 						<li style='width:15%;'>api key 등록 &nbsp;&nbsp;&nbsp;</li>
 						<li style='width:60%;'><input type="text" name="text_api"></li>
@@ -93,7 +93,7 @@
 					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuy() %>"> &nbsp;&nbsp;</li>
 					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSell() %>"> &nbsp;&nbsp;</li>
 					<li class="end body_data" style="width:10%;">
-						<input type="button" id=<%= arrayPrice[i].getCoinName() %> value="save" onclick="onButton(this.id)">
+						<input type="button" id=<%= arrayPrice[i].getCoinName() %> value="start" onclick="onButton(this.id)">
 					</li>
 					
 				</ul>
@@ -101,5 +101,6 @@
 		</div>
 	</body>	
 </html>
+
 
 

@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
 var mysql = require('mysql');
-var urlEncode = require('urlencode');
-var crypto = require('crypto');
 var main = require('./main');
+var connBitApi = require('./connBithumb');
+var common = require('../data/common');
 
 /* GET home page. */
 router.all('/', function(req, res, next) {
@@ -40,7 +40,7 @@ function login(req, res){
 		}else{
 			if(result == ''){
 				var msg = "아이디가 존재하지 않습니다.";
-				res.send({isSuccess:true,msg:msg});
+				res.send({isSuccess:false,msg:msg});
 			}else{
 				if(pw == result[0].password){
 					if(result[0].fail_password_cnt > 0){
@@ -85,11 +85,11 @@ function regist(req, res){
 	var user_id = req.body.user_id;
 	var pw = req.body.password;
 	var user_name = req.body.user_name;
-	var bit_cert = makeString(user_name, user_id, req.body.bitsum_cert);
-	var bit_api = makeString(user_name, user_id, req.body.bitsum_api);
+	var bit_secret = common.makeString(user_name, user_id, req.body.secret_key);
+	var bit_api = common.makeString(user_name, user_id, req.body.api_key);
 
 	var date = new Date();
-	var s_key = makeString('^*A', user_id, date.toDateString());
+	var s_key = common.makeString('^*A', user_id, date.toDateString());
 
 	var query = "SELECT * FROM users WHERE user_id='" + user_id + "'";
 	dbManager.selectQuery(query, function(err, result){
@@ -97,7 +97,7 @@ function regist(req, res){
 			res.render('error', {error:err});
 		}else{
 			if(result == ''){
-				var values = [user_id.toString(), pw.toString(), bit_cert.toString(), bit_api.toString(), user_name.toString(), s_key.toString()];
+				var values = [user_id.toString(), pw.toString(), bit_secret.toString(), bit_api.toString(), user_name.toString(), s_key.toString()];
 				var valuesString = '';
 
 				for(var i=0; i<values.length; i++ ){
@@ -107,7 +107,7 @@ function regist(req, res){
 						valuesString += "'" + values[i] + "',";
 					}
 				}
-				var insert = "(user_id, password, bit_cer_key, bit_api_key, user_name, s_key) VALUE ("+valuesString +")";
+				var insert = "(user_id, password, bit_secret_key, bit_api_key, user_name, s_key) VALUE ("+valuesString +")";
 				dbManager.insertQuery('users', insert, function(err, result){
 					if(err){
 						res.render('error', { error:err});
@@ -125,20 +125,25 @@ function regist(req, res){
 	});
 }
 
-function makeString(user, identity, value){
-	var key = urlEncode(user) + urlEncode(identity);
-	const cipher = crypto.createCipher('aes-256-cbc',key);
-	let result = cipher.update(value, 'utf-8', 'base64');
 
-	return result+= cipher.final('base64');
-}
 
-function disarmedString(user, identity, value){
-	var key = urlEncode(user) + urlEncode(identity);
-	const decipher = crypto.createDecipher('aes-256-cbc', key);
-	let result = decipher.update(value, 'base64', 'utf-8');
-
-	return result += decipher.final('utf8');
-}
+router.post('/user_info', function(req, res){
+	var secret = req.body.secretKey;
+	var api = req.body.apiKey;
+	
+	connBitApi.requestUserInfo(secret, api, 'XRP', function(err, result){
+		if(err){
+			res.send({isSuccess:false,msg:'오류-다시 시도 해보셈.'});
+		}else{
+			if(parseInt(result.status) == 0){
+				res.send({isSuccess:true, msg:'검증 성공 !!'});
+			}else{
+				res.send({isSuccess:false, msg:'검증 오류 :' + result.message});
+			}
+		}
+	});
+	
+});
 
 module.exports = router;
+

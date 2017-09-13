@@ -4,45 +4,62 @@
 		<title></title>
 		<link rel='stylesheet' href='/stylesheets/style.css'/>
 		<style>
+			.table{
+				width:300px;
+				height:350px;
+				margin:0;
+				padding:0;
+			}
+			
 			ul{
 				list-style:none;
-				padding-left:0px;
+				padding:0px;
 				width:100%;
-				margin-left:5%;
-				margin-right:5%;
+				height: 30px;
 			}
 
 			ul li{
 				float:left;
-				margin-top:10xp;
-				margin-bottom:20px;
 			}
 
 			.li_title{
-				width:15%;
+				width:25%;
 			}
 			
 			.li_body{
 				width:75%;
+				
 			}
-
+			.li_one_button{
+				width:100%;
+				text-align:right;
+			}
+			
 			.li_button{
-				margin-top:10px;
-				margin-right:10px;
+				float:right;
 			}
+			
+			input[type=text], input[type=password]{
+				width:96%;
+			}
+			
 		</style>
 		<script src="/js/jquery.min.js"></script>
 		<script>
 			$(function(){
+				var _keyCheck = false;
+				
 				$("#btnRegist").click(function(){
 					if(validationCheck() == true){
 						$("#requestForm").attr("action","/regist_data");
 						$("#requestForm").submit();
 					}
 				});
+				
 				$("#btnCancel").click(function(){
 					window.history.back();
 				});
+				
 				function validationCheck(){
 					if($("#id_text").val() == "" || $("pw_text").val() == ""){
 						alert("아이디 패스워드 입력해야지");
@@ -53,10 +70,41 @@
 					}else if($("#user_name").val().length < 2){
 						alert('이름써');
 						return false;
+					}else if($('#secret_key').val().length > 0 || $('#api_key').val().length > 0){
+						if(_keyCheck){
+							return true;
+						}else{
+							alert('secret key 혹은 api key 가 잘못 되어 있네.');
+							return false;
+						}
 					}else{
 						return true;
 					}
 				}
+				
+				$("#keyCheck").click(function(){
+					var secret = $('#secret_key').val();
+					var api = $('#api_key').val();
+					
+					if(secret.length == null || secret.length < 5 ){
+						alert('secret key 확인 바람');
+						return false;
+					}else if(api.length == null || api.length < 5 ){
+						alert('api key 확인 바람');
+						return false;
+					}
+						
+					$.ajax({
+						url:"/user_info",
+						type:"POST",
+						data:{secretKey:secret, apiKey:api},
+						dataType:"json",
+						success:function(result){
+							_keyCheck = result['isSuccess'] ; 
+							alert(result['msg']);
+						}
+					});
+				});
 			});
 		</script>
 	</head>
@@ -72,12 +120,15 @@
 					<li class="li_body"><input type="password" id="pw_text" name="password" maxlength=40/></li>
 				</ul>
 				<ul>
-					<li class="li_title">bitsum cert key</li>
-					<li class="li_body"><input type="text" id="bitsum_cert" name="bitsum_cert" maxlength=200 /></li>
+					<li class="li_title">secret key</li>
+					<li class="li_body"><input type="text" id="secret_key" name="secret_key" maxlength=200 /></li>
 				</ul>
 				<ul>
-					<li class="li_title">bitsum api key</li>
-					<li class="li_body"><input type="text" id="bitsum_api" name="bitsum_api" maxlength=200 /></li>
+					<li class="li_title">api key</li>
+					<li class="li_body"><input type="text" id="api_key" name="api_key" maxlength=200 /></li>
+				</ul>
+				<ul>
+					<li class="li_one_button"><input type="button" id="keyCheck" value="key check"> (둘다 적고 체크)</li>
 				</ul>
 				<ul>
 					<li class="li_title">이름</li>
@@ -91,3 +142,4 @@
 		</form>
 	</body>
 </html>
+

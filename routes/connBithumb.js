@@ -2,6 +2,8 @@ var request = require('request');
 var coinData = require('../data/coinData');
 require('date-utils');
 var dbManager = require('./db_controller');
+var bithumbUserAPI = require('./bithumbUserAPI');
+var common = require('../data/common');
 
 //헤더 부분
 var headers = {
@@ -89,20 +91,17 @@ function resultCheck(arrayResult, current, end, callback){
 	}
 }
 
-//{
-//    "status": "0000",
-//    "data": {
-//        "opening_price" : "504000",
-//        "closing_price" : "505000",
-//        "min_price"     : "504000",
-//        "max_price"     : "516000",
-//        "average_price" : "509533.3333",
-//        "units_traded"  : "14.71960286",
-//        "volume_1day"   : "14.71960286",
-//        "volume_7day"   : "15.81960286",
-//        "buy_price"     : "505000",
-//        "sell_price"    : "504000",
-//        "date"          : 1417141032622
-//    }
-//}
+exports.requestUserInfo = function(secretKeyValue, apiKeyValue, coinName, callback){
+	var api = new bithumbUserAPI(apiKeyValue, secretKeyValue);
+	
+	var rgParams = { currency:coinName };
+	
+	api.apiCall('/info/account', rgParams, function(err, result){
+		console.log('callback : ' + JSON.stringify(result));
+		return callback(err, result);	
+		
+	});
+	
+}
+
 

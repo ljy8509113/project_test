@@ -38,7 +38,7 @@ exports.initMain = function(req, res, user_id, isFirst){
 				resultInit(res);
 			});
 			
-			info = new userInfo(result[0].user_id, result[0].bit_cer_key, result[0].bit_api_key, result[0].auto_setting_list, result[0].user_name);
+			info = new userInfo(result[0].user_id, result[0].bit_secret_key, result[0].bit_api_key, result[0].auto_setting_list, result[0].user_name);
 			var coinName = [];
 			var arrayCoin = common.getCoinCodeList();
 			
@@ -56,6 +56,14 @@ exports.initMain = function(req, res, user_id, isFirst){
 				_isEndRequest = true;
 				resultInit(res);
 			});
+			
+//			connBithumb.requestUserInfo('','', function(err, result){
+//				if(err){
+//					
+//				}else{
+//					console.log('main result : ' + result);
+//				}
+//			});
 		}
 	});
 }
@@ -69,4 +77,5 @@ function resultInit(res){
 		res.render('main',{data:info, arrayPrice:coinPrice, dicSettingCoin:dicAutoCoin});
 	}
 }
+
 
