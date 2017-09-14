@@ -47,16 +47,25 @@
 
 var request = require('request');
 
-function bithumbUserAPI(api_key, api_secret){
+//function bithumbUserAPI(api_key, api_secret){
+//	this.apiUrl = 'https://api.bithumb.com';
+//	this.api_key = api_key;
+//	this.api_secret = api_secret;
+//	console.log('Xcoinapi -- ');
+//};
+
+function bithumbUserAPI(apiKey, secretKey){
 	this.apiUrl = 'https://api.bithumb.com';
-	this.api_key = api_key;
-	this.api_secret = api_secret;
+	this.api_key = apiKey;
+	this.api_secret = secretKey;
 	console.log('Xcoinapi -- ');
 };
 
 var proto = bithumbUserAPI.prototype;
 
-proto.apiCall = function(endPoint, params, callback) {
+proto.apiCall = function(endPoint, params, callback){
+	console.log('Xcoinapi -- apiCall ');
+	
 	var rgParams = {
 		'endPoint' : endPoint
 	};
@@ -69,7 +78,7 @@ proto.apiCall = function(endPoint, params, callback) {
 
 	var api_host = this.apiUrl + endPoint;
 	var httpHeaders = this._getHttpHeaders(endPoint, rgParams, this.api_key, this.api_secret);
-
+	
 	var rgResult = this.request(api_host, 'POST', rgParams, httpHeaders, callback);
 }
 
@@ -246,4 +255,5 @@ h<<13)^(g<<3|h>>>29)^g>>>6,h=(h>>>19|g<<13)^(h<<3|g>>>29)^(h>>>6|g<<26),g=k[t-7]
 this._hasher;a=b.finalize(a);b.reset();return b.finalize(this._oKey.clone().concat(a))}})})();
 
 module.exports = bithumbUserAPI;
+
 

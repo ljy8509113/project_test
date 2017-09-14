@@ -50,6 +50,10 @@
 			.body_data {
 				text-align: center;
 			}
+			
+			.user_assets{
+				margin-top:50px;
+			}
 
 		</style>
 		<script type="text/javascript">
@@ -98,9 +102,37 @@
 					
 				</ul>
 			<% } %>
+			<% if(assets){ %>
+				<br/><br/><br/><br/>
+				<ul class='header'>
+					<li style="width:10%;">코인명</li>
+					<li style="width:20%;">보유중인 액수</li>
+					<li style="width:20%;">사용중인 액수</li>
+					<li style="width:20%;">남은 액수</li>
+					<li class="end" style="width:15%;">한화 환산액</li>
+				</ul>
+				<% 
+					var allKeys = Object.keys(assets);
+					var totalWan = 0;
+					
+					for(var i=0; i<allKeys.length; i++){
+						var dicValue = assets[allKeys[i]];
+						totalWan +=  parseInt(dicValue['priceValue']);
+				%>
+					<ul class='body'>
+						<li class="body_data" style="width:10%;"> <%= allKeys[i] %> </li>
+						<li class="money" style="width:20%;"> <%= Number(dicValue['available']).toLocaleString('en') %>  &nbsp;&nbsp;</li>
+						<li class="money" style="width:20%;"> <%= Number(dicValue['inUse']).toLocaleString('en') %>  &nbsp;&nbsp;</li>
+						<li class="money" style="width:20%;"> <%= Number(parseFloat(dicValue['total']) - parseFloat(dicValue['inUse'])).toLocaleString('en') %>  &nbsp;&nbsp;</li>
+						<li class="money end" style="width:15%;"> <%= Number(parseInt(dicValue['priceValue'])).toLocaleString('en') %>  &nbsp;&nbsp;</li>
+					</ul>	
+				<% } %>
+				<ul class='header'>
+					<li class="body_data" style="width:10%;"> 총 액 </li>
+					<li class="money end" style="width:75%;"> <%= Number(totalWan).toLocaleString('en') %> &nbsp;&nbsp;</li>
+				</ul>
+			<% } %>
 		</div>
 	</body>	
 </html>
-
-
 

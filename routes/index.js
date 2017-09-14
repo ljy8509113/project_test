@@ -25,7 +25,7 @@ router.post('/regist_data', function(req, res){
 
 router.all('/main', function(req, res){
 	//var user_id = req.body.user_id;
-	var user_id = "test123";
+	var user_id = "testAdmin";
 	main.initMain(req, res, user_id, false);
 });
 
@@ -131,7 +131,7 @@ router.post('/user_info', function(req, res){
 	var secret = req.body.secretKey;
 	var api = req.body.apiKey;
 	
-	connBitApi.requestUserInfo(secret, api, 'XRP', function(err, result){
+	connBitApi.requestUser(secret, api, 'XRP', function(err, result){
 		if(err){
 			res.send({isSuccess:false,msg:'오류-다시 시도 해보셈.'});
 		}else{

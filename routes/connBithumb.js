@@ -37,7 +37,6 @@ exports.requestCoinPrice = function(arrayCoin, isSave, callback){
 	        		if(data){
 //	        			console.log(arrayCoin[i] + ' >>>>> ' +JSON.stringify(data));
 	        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time)));
-	        			console.log('key time : ' + coin.getKeyTime());
 	        			arrayResult.push(coin);
 	        			
 	        			if(isSave){
@@ -91,9 +90,8 @@ function resultCheck(arrayResult, current, end, callback){
 	}
 }
 
-exports.requestUserInfo = function(secretKeyValue, apiKeyValue, coinName, callback){
+exports.requestUser = function(secretKeyValue, apiKeyValue, coinName, callback){
 	var api = new bithumbUserAPI(apiKeyValue, secretKeyValue);
-	
 	var rgParams = { currency:coinName };
 	
 	api.apiCall('/info/account', rgParams, function(err, result){
@@ -101,7 +99,18 @@ exports.requestUserInfo = function(secretKeyValue, apiKeyValue, coinName, callba
 		return callback(err, result);	
 		
 	});
-	
 }
+
+exports.requestUserWallet = function(user, callback){
+	var api = new bithumbUserAPI(user.getBitApi(), user.getBitSecret());
+	var rgParams = { currency:'ALL' };
+	
+	api.apiCall('/info/balance', rgParams, function(err, result){
+		console.log('callback : ' + JSON.stringify(result));
+		return callback(err, result);	
+		
+	});
+}
+
 
 
