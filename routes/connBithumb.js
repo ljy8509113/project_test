@@ -11,7 +11,7 @@ var headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-exports.requestCoinPrice = function(arrayCoin, isSave, callback){
+exports.requestCoinPrice = function(arrayCoin, isSave, dicBefore, callback){
 	var options = {
 		    url: 'https://api.bithumb.com/public/ticker/ALL',
 		    method:'GET',
@@ -26,68 +26,63 @@ exports.requestCoinPrice = function(arrayCoin, isSave, callback){
 
 	        var result = parseInt(accountObj.status);
 	        console.log("result : " + result);
+	        
 	        if(result == 0){
 	        	var time = accountObj.data.date;
 	        	var currentCount = 0;
 	        	var arrayResult = [];
 	        	
 	        	for(var i=0; i<arrayCoin.length; i++){
-	        		var data = accountObj.data[arrayCoin[i]];
-	        		
-	        		if(data){
-//	        			console.log(arrayCoin[i] + ' >>>>> ' +JSON.stringify(data));
-	        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time)));
-	        			arrayResult.push(coin);
-	        			
-	        			if(isSave){
-	        				var query = "SELECT * FROM coin_price_bithumb coin_name='" + coin.getCoinName() +"' WHERE key_time='"+coin.getKeyTime()+"'";
-	        				dbManager.selectQuery(query, function(err, result){
-	        					if(err){
-	        						endCount += 1;
-	        					}else{
-	        						if(result){
-	        							query = coin.getInsertQuery();
-	        							dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
-	        								if(err){
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
-	        								}else{
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
-	        								}
-	        							});
-	        						}else{
-	        							query = coin.getUpdateQuery();
-	        							dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
-	        								if(err){
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
-	        								}else{
-	        									resultCheck(arrayResult, currentCount += 1, arrayCoin.length, callback);
-	        								}
-	        							});
-	        						}
-	        					}
-	        				});
-	        			}
-	        		}
-	        	}
+        			var data = accountObj.data[arrayCoin[i]];
+        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time)));
+        			arrayResult.push(coin);
+        		}
 	        	
-	        	if(!isSave){
-	        		console.log('arrayResult : ' + arrayResult);
+	        	if(isSave){
+	        		if(arrayResult.length > 0)
+	        			saveCoinData(0, arrayResult, dicBefore, callback);
+	        	}else{
 	        		return callback(null, arrayResult);
 	        	}
-	        	
 		    }else{
 		    	return callback(error, "fail");	
 		    }
-		    
-	        
 	    }
 	});
 }
 
-function resultCheck(arrayResult, current, end, callback){
-	if(end == current){
-		return callback(null, arrayResult);
-	}
+function saveCoinData(index, array, dicBefore, callback){
+	var coin = array[index];
+	var query = "SELECT * FROM coin_price_bithumb WHERE coin_name='" + coin.getCoinName() +"' AND key_time="+coin.getKeyTime();
+	var current = index;
+	console.log('sele q : ' + query);
+	dbManager.selectQuery(query, function(err, result){
+		if(err){
+			
+		}else{
+			console.log(JSON.stringify(result));
+			if(result.length == 0){
+				query = coin.getInsertQuery(dicBefore);
+				console.log('insert : ' + query);
+				dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
+					if(current == (array.length - 1)){
+						return callback(null, array);
+					}else{
+						saveCoinData(current+1, array, callback);
+					}
+				});
+			}else{
+				query = coin.getUpdateQuery(dicBefore);
+				dbManager.updateQuery("coin_price_bithumb", query, function(err, result){
+					if(current == (array.length - 1)){
+						return callback(null, array);
+					}else{
+						saveCoinData(current+1, array, callback);
+					}
+				});
+			}
+		}
+	});
 }
 
 exports.requestUser = function(secretKeyValue, apiKeyValue, coinName, callback){
@@ -111,6 +106,3 @@ exports.requestUserWallet = function(user, callback){
 		
 	});
 }
-
-
-

@@ -7,11 +7,17 @@ function user(userId, bitSecret, bitApi, autoSettingList, userName){
 	this.bitApi = bitApi;
 	this.autoSettingList =  autoSettingList;
 	this.userName = userName;
-	
-	console.log('user data - ' + this.userName);
 }
 
 var proto = user.prototype;
+
+proto.setValues = function(userId, bitSecret, bitApi, autoSettingList, userName){
+	this.userId = userId;
+	this.bitSecret = bitSecret;
+	this.bitApi = bitApi;
+	this.autoSettingList =  autoSettingList;
+	this.userName = userName;
+}
 
 proto.setUserId = function(userId){
 	this.userId = userId;
@@ -86,6 +92,4 @@ exports.updateUserData = function(userData){
 }
 
 module.exports = user;
-
-
 

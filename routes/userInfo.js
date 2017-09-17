@@ -1,5 +1,6 @@
 var user = require('../data/user'); 
 var assets = require('../data/assets');
+
 var userData = null;
 var assetsData = null;
 
@@ -8,7 +9,7 @@ exports.init = function(userId, bitSecret, bitApi, autoSettingList, userName){
 		userData = new user(userId, bitSecret, bitApi, autoSettingList, userName);
 		console.log('if user : ' + userData);
 	}else{
-		userData(userId, bitSecret, bitApi, autoSettingList, userName);
+		userData.setValues(userId, bitSecret, bitApi, autoSettingList, userName);
 		console.log('else user : ' + userData);
 	}
 	
@@ -18,7 +19,7 @@ exports.setAssets = function(data){
 	if(assetsData == null)
 		assetsData = new assets(data);
 	else
-		assetsData(data)
+		assetsData.setData(data);
 }
 
 exports.getUser = function(){
@@ -29,4 +30,5 @@ exports.getUser = function(){
 exports.getAssets = function(){
 	return assetsData;
 }
+
 
