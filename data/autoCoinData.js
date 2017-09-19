@@ -1,11 +1,13 @@
-function autoCoinData(coinId, buy, sell, isAuto, time, buyPrice, sellAmount){
+function autoCoinData(coinId, buy, sell, time, buyAmount, sellAmount, userId, secretKey, apiKey){
 	this.coinId = coinId;
 	this.buy = buy;
 	this.sell = sell;
-	this.isAuto =  isAuto;
 	this.time = time;
-	this.buyPrice = buyPrice
+	this.buyAmount = buyAmount;
 	this.sellAmount = sellAmount;
+	this.userId = userId;
+	this.secretKey = secretKey;
+	this.apiKey = apikey;
 }
 
 var proto = autoCoinData.prototype;
@@ -34,14 +36,6 @@ proto.getSell = function(){
 	return this.sell;
 };
 
-proto.setIsAuto = function(isAuto){
-	this.isAuto = isAuto;
-};
-
-proto.getIsAuto = function(){
-	return this.isAuto;
-};
-
 proto.setTime = function(time){
 	this.time = time;
 };
@@ -50,12 +44,12 @@ proto.getTime = function(){
 	return this.time;
 };
 
-proto.setBuyPrice = function(buyPrice){
-	this.buyPrice = buyPrice;
+proto.setBuyAmount = function(buyAmount){
+	this.buyAmount = buyAmount;
 };
 
-proto.getBuyPrice = function(){
-	return this.buyPrice;
+proto.getBuyAmount = function(){
+	return this.buyAmount;
 };
 
 proto.setSellAmount = function(sellAmount){
@@ -66,4 +60,29 @@ proto.getSellAmount = function(){
 	return this.sellAmount;
 };
 
+proto.setUserId = function(userId){
+	this.userId = userId;
+};
+
+proto.getUserId = function(){
+	return this.userId;
+};
+
+proto.setSecretKey = function(secretKey){
+	this.secretKey = secretKey;
+};
+
+proto.getSecretKey = function(){
+	return this.secretKey;
+};
+
+proto.setApiKey = function(apiKey){
+	this.apiKey = apiKey;
+};
+
+proto.getApiKey= function(){
+	return this.apiKey;
+};
+
 module.exports = autoCoinData;
+

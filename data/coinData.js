@@ -70,12 +70,13 @@ proto.getDifference = function(){
 };
 
 proto.getInsertQuery = function(){
-	return "(coin_name, time, price, key_time, difference) VALUES ('" + this.coinName.toString() + "', '" + this.time + "', "+ this.price + ", " + this.keyTime + "," + this.difference + ")";
+	return "(coin_name, time, price, key_time) VALUES ('" + this.coinName.toString() + "', '" + this.time + "', "+ this.price + ", " + this.keyTime + ")";
 };
 
 proto.getUpdateQuery = function(){
-	return "coin_name = '" + this.coinName.toString() + "', time='" + this.time + "', price="+ this.price + ", key_time=" + this.keyTime + ", difference="+this.difference;
+	return "coin_name = '" + this.coinName.toString() + "', time='" + this.time + "', price="+ this.price + ", key_time=" + this.keyTime;
 };
 
 module.exports = coinData;
+
 

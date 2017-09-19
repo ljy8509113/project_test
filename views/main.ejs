@@ -54,11 +54,34 @@
 			.user_assets{
 				margin-top:50px;
 			}
-
+			
 		</style>
 		<script type="text/javascript">
-			function onButton(button_id){
-				console.log('on button : ' + button_id);
+			function onSave(coinName, index){
+				console.log('on name : ' + coinName + ' index : ' + index);
+				
+				var buy = $('#text_buy_'+index).val();
+				var sell = $('#text_sell_'+index).val();
+				var buyAmount = $('#text_buy_amount_'+index).val();
+				var sellAmount = $('#text_sell_amount_'+index).val();
+				
+				$.ajax({
+					url:"/saveAuto",
+					type:"POST",
+					data:{coin_name:coinName, buy:buy, buy_amount:buyAmount, sell:sell, sell_amount:sellAmount},
+					dataType:"json",
+					success:function(result){
+						if(result['isSuccess']==true){
+							alert('설정되었습니다.');
+						}else{
+							alert(result['msg']);
+						}
+					}
+				});
+			}
+			
+			function onCancle(coinName, index){
+				
 			}
 		</script>
 	</head>
@@ -84,22 +107,29 @@
 			<% } %>	
 			
 			<ul class="header">
-				<li style="width:13%;">코인명</li>
-				<li style="width:24%;">현제가격</li>
-				<li style="width:24%;">구매가(auto)</li>
-				<li style="width:24%;">판매가(auto)</li>
-				<li class="end" style="width:10%;">설정</li>
+				<li style="width:10%;">코인명</li>
+				<li style="width:15%;">현제가격</li>
+				<li style="width:15%;">구매가(auto)</li>
+				<li style="width:10%;">구매수량(auto)</li>
+				<li style="width:15%;">판매가(auto)</li>
+				<li style="width:10%;">판매수량(auto)</li>
+				<li style="width:10%;">저장</li>
+				<li class="end" style="width:10%;">취소</li>
 			</ul>
 			<% for(var i=0; i<arrayPrice.length; i++){ %>
-				<ul class="body">
-					<li class="body_data" style="width:13%;"><%= arrayPrice[i].getCoinNameKor() %></li>
-					<li class="money" style="width:24%;"><%= Number(arrayPrice[i].getPrice()).toLocaleString('en') %> &nbsp;&nbsp;</li>
-					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuy() %>"> &nbsp;&nbsp;</li>
-					<li class="money" style="width:24%;"><input type="text" id="text_buy" name="text_buy" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSell() %>"> &nbsp;&nbsp;</li>
-					<li class="end body_data" style="width:10%;">
-						<input type="button" id=<%= arrayPrice[i].getCoinName() %> value="start" onclick="onButton(this.id)">
+				<ul class="body" id='coin_row_'+<%= i %>>
+					<li class="body_data" style="width:10%;"><%= arrayPrice[i].getCoinNameKor() %></li>
+					<li class="money" style="width:15%;"><%= Number(arrayPrice[i].getPrice()).toLocaleString('en') %> &nbsp;&nbsp;</li>
+					<li class="money" style="width:15%;"><input type="text" id="text_buy_"+<%= i %> name="text_buy_"+<%= i %> value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuy() %>"> &nbsp;&nbsp;</li>
+					<li class="money" style="width:10%;"><input type="text" id="text_buy_amount_"+<%= i %> name="text_buy_amount_"+<%= i %> value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuyAmount() %>"> &nbsp;&nbsp;</li>
+					<li class="money" style="width:15%;"><input type="text" id="text_sell_"+<%= i %> name="text_sell_"+<%= i %> value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSell() %>"> &nbsp;&nbsp;</li>
+					<li class="money" style="width:10%;"><input type="text" id="text_sell_amount_"+<%= i %> name="text_sell_amount_"+<%= i %> value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSellAmount() %>"> &nbsp;&nbsp;</li>
+					<li class="body_data" style="width:10%;">
+						<input type="button" id='buy_'+<%=i%> value="start" onclick="onSave(<%= arrayPrice[i].getCoinName()%>, <%=i%>)">
 					</li>
-					
+					<li class="end body_data" style="width:10%;">
+						<input type="button" id='cancle_'+<%=i%> value="cancle" onclick="onCancle(<%= arrayPrice[i].getCoinName()%>, <%=i%>)">
+					</li>
 				</ul>
 			<% } %>
 			<% if(assets){ %>
@@ -135,4 +165,5 @@
 		</div>
 	</body>	
 </html>
+
 

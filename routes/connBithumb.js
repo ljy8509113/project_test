@@ -11,7 +11,7 @@ var headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-exports.requestCoinPrice = function(arrayCoin, isSave, dicBefore, callback){
+exports.requestCoinPrice = function(arrayCoin, isSave, callback){
 	var options = {
 		    url: 'https://api.bithumb.com/public/ticker/ALL',
 		    method:'GET',
@@ -34,13 +34,13 @@ exports.requestCoinPrice = function(arrayCoin, isSave, dicBefore, callback){
 	        	
 	        	for(var i=0; i<arrayCoin.length; i++){
         			var data = accountObj.data[arrayCoin[i]];
-        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time)));
+        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time), 0));
         			arrayResult.push(coin);
         		}
 	        	
 	        	if(isSave){
 	        		if(arrayResult.length > 0)
-	        			saveCoinData(0, arrayResult, dicBefore, callback);
+	        			saveCoinData(0, arrayResult, callback);
 	        	}else{
 	        		return callback(null, arrayResult);
 	        	}
@@ -51,7 +51,7 @@ exports.requestCoinPrice = function(arrayCoin, isSave, dicBefore, callback){
 	});
 }
 
-function saveCoinData(index, array, dicBefore, callback){
+function saveCoinData(index, array, callback){
 	var coin = array[index];
 	var query = "SELECT * FROM coin_price_bithumb WHERE coin_name='" + coin.getCoinName() +"' AND key_time="+coin.getKeyTime();
 	var current = index;
@@ -62,7 +62,7 @@ function saveCoinData(index, array, dicBefore, callback){
 		}else{
 			console.log(JSON.stringify(result));
 			if(result.length == 0){
-				query = coin.getInsertQuery(dicBefore);
+				query = coin.getInsertQuery();
 				console.log('insert : ' + query);
 				dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
 					if(current == (array.length - 1)){
@@ -72,7 +72,7 @@ function saveCoinData(index, array, dicBefore, callback){
 					}
 				});
 			}else{
-				query = coin.getUpdateQuery(dicBefore);
+				query = coin.getUpdateQuery();
 				dbManager.updateQuery("coin_price_bithumb", query, function(err, result){
 					if(current == (array.length - 1)){
 						return callback(null, array);
@@ -106,3 +106,4 @@ exports.requestUserWallet = function(user, callback){
 		
 	});
 }
+
