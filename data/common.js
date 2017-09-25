@@ -44,4 +44,9 @@ exports.disarmedString = function(user, identity, value){
 	return result += decipher.final('utf8');
 }
 
+exports.getTime = function(){
+	var time = new Date();
+	return time.toFormat('YYYY-MM-DD HH:MI:SS');
+}
+
 

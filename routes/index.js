@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
 var mysql = require('mysql');
-var main = require('./main');
+//var main = require('./main');
 var connBitApi = require('./connBithumb');
 var common = require('../data/common');
 
@@ -23,11 +23,11 @@ router.post('/regist_data', function(req, res){
 	regist(req, res);
 });
 
-router.all('/main', function(req, res){
-	//var user_id = req.body.user_id;
-	var user_id = "testAdmin";
-	main.initMain(req, res, user_id, false);
-});
+//router.all('/main', function(req, res){
+//	//var user_id = req.body.user_id;
+//	var user_id = "testAdmin";
+//	main.initMain(req, res, user_id, false);
+//});
 
 function login(req, res){
 	var user_id = req.body.user_id;
@@ -44,7 +44,7 @@ function login(req, res){
 			}else{
 				if(pw == result[0].password){
 					if(result[0].fail_password_cnt > 0){
-						query = "fail_password_cnt=0";
+						query = "fail_password_cnt=0 WHERE user_id='"+user_id+"';";
 						dbManager.updateQuery('users', query, function(err, result){
 							if(err){
 								res.render('error',{error:err});
@@ -62,7 +62,7 @@ function login(req, res){
 					if(failCnt < 10){
 						failCnt += 1;
 
-						query = "fail_password_cnt="+failCnt;
+						query = "fail_password_cnt="+failCnt+" WHERE user_id='"+user_id+"';";
 						dbManager.updateQuery('users', query, function(err, result){
 							if(err){
 								res.render('error',{error:err});
@@ -146,4 +146,5 @@ router.post('/user_info', function(req, res){
 });
 
 module.exports = router;
+
 

@@ -11,7 +11,7 @@ var headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-exports.requestCoinPrice = function(arrayCoin, isSave, callback){
+exports.requestAllCoinPrice = function(arrayCoin, isSave, callback){
 	var options = {
 		    url: 'https://api.bithumb.com/public/ticker/ALL',
 		    method:'GET',
@@ -85,6 +85,33 @@ function saveCoinData(index, array, callback){
 	});
 }
 
+exports.requestCoinPrice = function(coin, callback){
+	var options = {
+		    url: 'https://api.bithumb.com/public/ticker/',
+		    method:'GET',
+		    headers: headers,
+		    qs: {coin}
+		}
+		 
+	// 요청 시작 받은값은 body
+	request(options, function (error, response, body) {
+	    if (!error && response.statusCode == 200) {
+	        var accountObj = JSON.parse(body);
+
+	        var result = parseInt(accountObj.status);
+	        console.log("result : " + JSON.stringify(accountObj));
+	        
+	        if(result == 0){
+	        	var nowPrice = accountObj.data.buy_price;
+	        	return callback(null, nowPrice);
+	        	
+		    }else{
+		    	return callback(error, "fail");	
+		    }
+	    }
+	});
+}
+
 exports.requestUser = function(secretKeyValue, apiKeyValue, coinName, callback){
 	var api = new bithumbUserAPI(apiKeyValue, secretKeyValue);
 	var rgParams = { currency:coinName };
@@ -106,4 +133,5 @@ exports.requestUserWallet = function(user, callback){
 		
 	});
 }
+
 

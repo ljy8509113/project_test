@@ -40,16 +40,18 @@ exports.deleteQuery = function(tableName, strQuery, callback){
 var requestQuery = function(query, option, callback){
 	var keys = Object.keys(queryOption);
 	var error;
+	console.log('query : ' + query);
 	connection.query(query, function(err, result){
 		if(err){
 			error = Error();
 			error.status = err.code;
 			error.stack = err.sqlMessage;
-			console.log('query err option : ' + keys[option] + ' && ' + JSON.stringify(err));
+			console.log('query result error : ' + JSON.stringify(err) );
 			return callback(error, result);
 		}else{
-			console.log('query option : ' + keys[option] + ' && ' + JSON.stringify(result) );
+			console.log('query result : ' + JSON.stringify(result) );
 			return callback(err, result);
 		}
 	});
 }
+

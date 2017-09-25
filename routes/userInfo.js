@@ -31,4 +31,15 @@ exports.getAssets = function(){
 	return assetsData;
 }
 
+exports.getUserId = function(){
+	return userData.getUserId();
+}
+
+exports.getBitSecret = function(){
+	return userData.getBitSecret();
+}
+
+exports.getBitApi = function(){
+	return userData.getBitApi();
+}
 

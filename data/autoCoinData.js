@@ -7,7 +7,7 @@ function autoCoinData(coinId, buy, sell, time, buyAmount, sellAmount, userId, se
 	this.sellAmount = sellAmount;
 	this.userId = userId;
 	this.secretKey = secretKey;
-	this.apiKey = apikey;
+	this.apiKey = apiKey;
 }
 
 var proto = autoCoinData.prototype;
@@ -85,4 +85,5 @@ proto.getApiKey= function(){
 };
 
 module.exports = autoCoinData;
+
 
