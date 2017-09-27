@@ -28,6 +28,10 @@ exports.getCoinCodeList = function(){
 	return array;
 }
 
+exports.getUseCoinCodeList = function(){
+	return ["ETH","DASH","LTC","ETC","XRP","XMR"];
+}
+
 exports.makeString = function(user, identity, value){
 	var key = urlEncode(user) + urlEncode(identity);
 	const cipher = crypto.createCipher('aes-256-cbc',key);

@@ -4,6 +4,7 @@ require('date-utils');
 var dbManager = require('./db_controller');
 var bithumbUserAPI = require('./bithumbUserAPI');
 var common = require('../data/common');
+var query = require('../data/queryString');
 
 //헤더 부분
 var headers = {
@@ -34,7 +35,7 @@ exports.requestAllCoinPrice = function(arrayCoin, isSave, callback){
 	        	
 	        	for(var i=0; i<arrayCoin.length; i++){
         			var data = accountObj.data[arrayCoin[i]];
-        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time), 0));
+        			var coin = new coinData(arrayCoin[i], data.buy_price, new Date(parseInt(time)), 0);
         			arrayResult.push(coin);
         		}
 	        	
@@ -53,18 +54,17 @@ exports.requestAllCoinPrice = function(arrayCoin, isSave, callback){
 
 function saveCoinData(index, array, callback){
 	var coin = array[index];
-	var query = "SELECT * FROM coin_price_bithumb WHERE coin_name='" + coin.getCoinName() +"' AND key_time="+coin.getKeyTime();
+//	var query = "SELECT * FROM coin_price_bithumb WHERE coin_name='" + coin.getCoinName() +"' AND key_time="+coin.getKeyTime();
 	var current = index;
 	console.log('sele q : ' + query);
-	dbManager.selectQuery(query, function(err, result){
+	
+	query.selectCoinPrice(coin.getCoinName(), coin.getKeyTime(), function(err, result){
 		if(err){
 			
 		}else{
 			console.log(JSON.stringify(result));
-			if(result.length == 0){
-				query = coin.getInsertQuery();
-				console.log('insert : ' + query);
-				dbManager.insertQuery("coin_price_bithumb", query, function(err, result){
+			if(result == ''){
+				query.insertCoinPrice(coin.getCoinName(), coin.getPrice(), coin.getTime(), coin.getKeyTime(), function(err, result){
 					if(current == (array.length - 1)){
 						return callback(null, array);
 					}else{
@@ -72,8 +72,7 @@ function saveCoinData(index, array, callback){
 					}
 				});
 			}else{
-				query = coin.getUpdateQuery();
-				dbManager.updateQuery("coin_price_bithumb", query, function(err, result){
+				query.updateCoinPrice(coin.getCoinName(), coin.getPrice(), coin.getTime(), coin.getKeyTime(), function(err, result){
 					if(current == (array.length - 1)){
 						return callback(null, array);
 					}else{
@@ -83,6 +82,8 @@ function saveCoinData(index, array, callback){
 			}
 		}
 	});
+	
+
 }
 
 exports.requestCoinPrice = function(coin, callback){
@@ -133,5 +134,11 @@ exports.requestUserWallet = function(user, callback){
 		
 	});
 }
+
+exports.requestTradeHistory = function(lastKey){
+	
+}
+
+
 
 

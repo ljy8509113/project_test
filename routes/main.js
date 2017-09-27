@@ -3,10 +3,11 @@ var router = express.Router();
 var coinData = require('../data/coinData');
 var connBithumb = require('./connBithumb');
 var common = require('../data/common');
-var autoData = require('../data/autoCoinData');
+var autoCoinData = require('../data/autoCoinData');
 var userData = require('./userInfo');
 var main = require('./main');
 var query = require('../data/queryString');
+//var auto = require('../auto');
 
 var _isEndQuery = false;
 var _isEndRequest = false;
@@ -28,14 +29,16 @@ exports.initMain = function(req, res, user_id, isFirst){
 			var api = common.disarmedString(result[0].user_name, result[0].user_id, result[0].bit_api_key);
 			
 			if(result != ''){
-				query.selectCoinTrade(user_id, function(err, result){
+				query.selectAutoTrade(user_id, function(err, result){
 					if(err){
 						res.render('error',{error:err});
 					}else{
 						if(result != ''){
 							for(var i=0; i<result.length; i++){
-								var data = new autoData(result[i].coin_name, result[i].buy, result[i].sell, result[i].time, result[i].buy_amount, result[i].sell_amount, result[0].user_id, secret, api);
-								dicAutoCoin[result[i].coin_name] = data;
+//								var data = new autoCoinData(result[i].coin_name, result[i].buy, result[i].sell, result[i].time, result[i].buy_amount, result[i].sell_amount, result[i].user_id, secret, api, result[i].status);
+								var data = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].is_before_data);
+								if(data.getIsBefore() == 0)
+									dicAutoCoin[result[i].coin_name] = data;
 							}
 						}
 					}
@@ -47,7 +50,7 @@ exports.initMain = function(req, res, user_id, isFirst){
 				userData.init(result[0].user_id, secret, api, result[0].auto_setting_list, result[0].user_name);
 				
 				var coinName = [];
-				var arrayCoin = common.getCoinCodeList();
+				var arrayCoin = common.getUseCoinCodeList();//common.getCoinCodeList();
 				
 				for(var i=0; i<arrayCoin.length; i++){
 					coinName.push(common.getCoinName(arrayCoin[i]));
@@ -105,40 +108,56 @@ router.all('/', function(req, res) {
 	main.initMain(req, res, user_id, false);
 });
 
-router.post('/checkCurrent', function(req, res){
-	var name = req.body.coin_name;
-	
-	connBithumb.requestCoinPrice(name, function(err, result){
-		if(err){
-			var message = JSON.stringify(err);
-			res.send({isSuccess:false, msg:message});
-		}else{
-			console.log('requestCoinPrice end : ' + JSON.stringify(result));
-			res.send({isSuccess:true, nowPrice:parseInt(result)});
-		}
-	});
-});
+//router.post('/checkCurrent', function(req, res){
+//	var name = req.body.coin_name;
+//	
+//	connBithumb.requestCoinPrice(name, function(err, result){
+//		if(err){
+//			var message = JSON.stringify(err);
+//			res.send({isSuccess:false, msg:message});
+//		}else{
+//			console.log('requestCoinPrice end : ' + JSON.stringify(result));
+//			res.send({isSuccess:true, nowPrice:parseInt(result)});
+//		}
+//	});
+//});
 
-router.post('/saveAuto',function(req, res){
+router.post('/addAuto',function(req, res){
 	var name = req.body.coin_name;
-	var buy = req.body.buy;
-	var sell = req.body.sell;
-	var buyAmount = req.body.buy_amount;
-	var sellAmount = req.body.sell_amount;
+	var amount = req.body.amount;
 	
-	console.log('save auto : ' + name + " / " + buy +" / "+ sell+ ' : ' + buyAmount + " : " +sellAmount + " / user id : "+userData.getUserId());
-	
-	query.saveCoinTrade(userData.getUserId(), name, buy, sell, buyAmount, sellAmount, function(err, result){
+	query.saveAutoTrade(userData.getUserId(), name, 0, 0, amount, 0, function(err, result){
 		if(err){
 			var message = JSON.stringify(err);
 			res.send({isSuccess:false, msg:message});
-		}else{
-			var data = new autoData(name, buy, sell, common.getTime(), buyAmount, sellAmount, userData.getUserId(), userData.getBitSecret(), userData.getBitApi());
+		}else{			
+			var data = new autoCoinData(name, 0, userData.getUserId(), userData.getBitSecret(), userData.getBitApi(), 0, amount, 0);
 			dicAutoCoin[name] = data;
+//			auto.updateData(data);
 			res.send({isSuccess:true, resultData:data});
 		}
 	});
 });
+
+//router.post('/saveAuto',function(req, res){
+//	var name = req.body.coin_name;
+//	var buy = req.body.buy;
+//	var isPercent = req.body.is_percent;
+//	var amount = req.body.amount;
+//		
+////	query.saveCoinTrade(userData.getUserId(), name, buy, sell, buyAmount, sellAmount, function(err, result){
+//	query.saveAutoTrade(userData.getUserId(), name, buy, 0, isPercent, amount, function(err, result){
+//		if(err){
+//			var message = JSON.stringify(err);
+//			res.send({isSuccess:false, msg:message});
+//		}else{
+//			var data = new autoCoinData(name, buy, userData.getUserId(), userData.getBitSecret(), userData.getBitApi(), 0, amount);
+//			dicAutoCoin[name] = data;
+////			auto.updateData(data);
+//			res.send({isSuccess:true, resultData:data});
+//		}
+//	});
+//});
 
 router.all('/removeAuto', function(req, res){
 	var name = req.body.coin_name;
@@ -146,7 +165,8 @@ router.all('/removeAuto', function(req, res){
 	if(dicAutoCoin[name] == null){
 		res.send({isSuccess:false, msg:'설정되지 않은 코인'});
 	}else{
-		query.removeCoinTrade(userData.getUserId(), name, function(err, result){
+//		query.removeCoinTrade(userData.getUserId(), name, function(err, result){
+		query.removeAutoTrade(userData.getUserId(), name, 0, function(err, result){
 			if(err){
 				var message = JSON.stringify(err);
 				res.send({isSuccess:false, msg:message});
@@ -159,5 +179,6 @@ router.all('/removeAuto', function(req, res){
 });
 
 module.exports = router;
+
 
 

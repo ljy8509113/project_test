@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var dbManager = require('./db_controller');
 var mysql = require('mysql');
-//var main = require('./main');
 var connBitApi = require('./connBithumb');
 var common = require('../data/common');
+var query = require('../data/queryString');
 
 /* GET home page. */
 router.all('/', function(req, res, next) {
@@ -23,18 +23,11 @@ router.post('/regist_data', function(req, res){
 	regist(req, res);
 });
 
-//router.all('/main', function(req, res){
-//	//var user_id = req.body.user_id;
-//	var user_id = "testAdmin";
-//	main.initMain(req, res, user_id, false);
-//});
-
 function login(req, res){
 	var user_id = req.body.user_id;
 	var pw = req.body.password;
 
-	var query = "SELECT * FROM users WHERE user_id='" + user_id + "'";
-	dbManager.selectQuery(query, function(err, result){
+	query.selectUser(user_id, function(err, result){
 		if(err){ 
 			res.render('error',{error:err});
 		}else{
@@ -44,8 +37,7 @@ function login(req, res){
 			}else{
 				if(pw == result[0].password){
 					if(result[0].fail_password_cnt > 0){
-						query = "fail_password_cnt=0 WHERE user_id='"+user_id+"';";
-						dbManager.updateQuery('users', query, function(err, result){
+						query.updateFailCount(user_id, 0, function(err, result){
 							if(err){
 								res.render('error',{error:err});
 							}else{
@@ -62,8 +54,7 @@ function login(req, res){
 					if(failCnt < 10){
 						failCnt += 1;
 
-						query = "fail_password_cnt="+failCnt+" WHERE user_id='"+user_id+"';";
-						dbManager.updateQuery('users', query, function(err, result){
+						query.updateFailCount(user_id, failCnt, function(err, result){
 							if(err){
 								res.render('error',{error:err});
 							}else{
@@ -91,24 +82,12 @@ function regist(req, res){
 	var date = new Date();
 	var s_key = common.makeString('^*A', user_id, date.toDateString());
 
-	var query = "SELECT * FROM users WHERE user_id='" + user_id + "'";
-	dbManager.selectQuery(query, function(err, result){
+	query.selectUser(user_id, function(err, result){
 		if(err){
 			res.render('error', {error:err});
 		}else{
 			if(result == ''){
-				var values = [user_id.toString(), pw.toString(), bit_secret.toString(), bit_api.toString(), user_name.toString(), s_key.toString()];
-				var valuesString = '';
-
-				for(var i=0; i<values.length; i++ ){
-					if((values.length - 1) == i){
-						valuesString += "'" + values[i] + "'";
-					}else{
-						valuesString += "'" + values[i] + "',";
-					}
-				}
-				var insert = "(user_id, password, bit_secret_key, bit_api_key, user_name, s_key) VALUE ("+valuesString +")";
-				dbManager.insertQuery('users', insert, function(err, result){
+				query.insertUser(user_id, pw, bit_secret, bit_api, user_name, s_key, function(err, result){
 					if(err){
 						res.render('error', { error:err});
 					}else{
@@ -123,6 +102,7 @@ function regist(req, res){
 			}
 		}
 	});
+
 }
 
 
@@ -142,9 +122,9 @@ router.post('/user_info', function(req, res){
 			}
 		}
 	});
-	
 });
 
 module.exports = router;
+
 
 
