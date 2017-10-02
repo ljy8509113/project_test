@@ -12,6 +12,7 @@ var query = require('./data/queryString');
 var _arrayUsers = [];
 var _autoData = [];
 var _isGetData = false;
+var _arrayRequestCoin = [];
 
 var startTimer = setInterval(function(){
 	var time = new Date();
@@ -34,6 +35,26 @@ var startTimer = setInterval(function(){
 						var coinData = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].is_before_data);
 						setUserDataArray(coinData);
 					}
+					
+					for(var i=0; i<_arrayUsers.length; i++){
+						var isAdd = false;
+						
+						if(_arrayRequestCoin.length == 0){
+							_arrayRequestCoin.push(_arrayUsers[i].getCoinName());
+						}else{
+							for(var j=0; j<_arrayRequestCoin.length; j++){
+								if( _arrayRequestCoin[j] == _arrayUsers[i].getCoinName() ){
+									isAdd = true;
+								}
+							}
+							
+							if(!isAdd){
+								_arrayRequestCoin.push(_arrayUsers[i].getCoinName());
+							}
+							
+						}
+					}
+					
 				}
 			}
 		});
@@ -56,22 +77,31 @@ function autoTimer(){
 
 function requestPrice(){
 	console.log('timer : ' + new Date());
-	connBithumb.requestAllCoinPrice(common.getCoinCodeList(), true, function(err, result){
+//	connBithumb.requestAllCoinPrice(common.getCoinCodeList(), function(err, result){
+//		if(err){
+//			//res.render('error',{error:err});
+//			console.log('requestPrice err : ' + JSON.stringify(err));
+//		}else{
+//			console.log('requestCoinPrice end : ' + JSON.stringify(result));
+//			var array = common.getCoinCodeList();
+//			var dic = {};
+//			
+//			for(var i=0; i<result.length; i++){
+//				dic[result[i].getCoinName()] = result[i].getPrice();
+//			}
+//			
+//			if(_arrayUsers.length > 0){
+//				checkTradePrice(dic);
+//			}
+//		}
+//	});
+	
+	
+	connBithumb.requestAllTradeHistory(_arrayRequestCoin, function(err, result){
 		if(err){
-			//res.render('error',{error:err});
-			console.log('requestPrice err : ' + JSON.stringify(err));
+			
 		}else{
-			console.log('requestCoinPrice end : ' + JSON.stringify(result));
-			var array = common.getCoinCodeList();
-			var dic = {};
 			
-			for(var i=0; i<result.length; i++){
-				dic[result[i].getCoinName()] = result[i].getPrice();
-			}
-			
-			if(_arrayUsers.length > 0){
-				checkTradePrice(dic);
-			}
 		}
 	});
 }
@@ -103,7 +133,7 @@ function setUserDataArray(data){
 		_arrayUsers.push(data);	
 	}else{
 		for(var i=0; i<_arrayUsers.length; i++){
-			if(_arrayUsers[i].getUserId() == data.getUserId() && _arrayUsers[i].getCoinId() == data.getCoinId()){
+			if(_arrayUsers[i].getUserId() == data.getUserId() && _arrayUsers[i].getCoinName() == data.getCoinName() && _arrayUsers[i].getIsBefore() == data.getIsBefore()){
 				_arrayUsers[i] = data;
 			}else{
 				_arrayUsers.push(data);
@@ -116,6 +146,7 @@ exports.updateData = function(data){
 	console.log('updateData : ' + data);
 	setUserDataArray(data);
 }
+
 
 
 

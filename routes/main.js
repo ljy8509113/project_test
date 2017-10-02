@@ -56,7 +56,7 @@ exports.initMain = function(req, res, user_id, isFirst){
 					coinName.push(common.getCoinName(arrayCoin[i]));
 				}
 				
-				connBithumb.requestAllCoinPrice(arrayCoin, false, function(err, result){
+				connBithumb.requestAllCoinPrice(arrayCoin, function(err, result){
 					if(err){
 						res.render('error',{error:err});
 					}else{
@@ -179,6 +179,7 @@ router.all('/removeAuto', function(req, res){
 });
 
 module.exports = router;
+
 
 
 
