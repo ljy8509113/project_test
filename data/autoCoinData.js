@@ -1,4 +1,4 @@
-function autoCoinData(coinName, buy, userId, secretKey, apiKey, status, amount, isBefore){
+function autoCoinData(coinName, buy, userId, secretKey, apiKey, status, amount, sell){
 	this.coinName = coinName;
 	this.buy = buy;
 	this.userId = userId;
@@ -6,7 +6,7 @@ function autoCoinData(coinName, buy, userId, secretKey, apiKey, status, amount, 
 	this.apiKey = apiKey;
 	this.status = status;
 	this.amount = amount;
-	this.isBefore = isBefore;
+	this.sell = sell;
 }
 
 var proto = autoCoinData.prototype;
@@ -99,12 +99,12 @@ proto.getAmount= function(){
 	return this.amount;
 };
 
-proto.setIsBefore = function(isBefore){
-	this.isBefore = isBefore;
+proto.setSell = function(sell){
+	this.sell = sell;
 };
 
-proto.getIsBefore= function(){
-	return this.isBefore;
+proto.getSell= function(){
+	return this.sell;
 };
 
 module.exports = autoCoinData;

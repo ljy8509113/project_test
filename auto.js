@@ -32,7 +32,7 @@ var startTimer = setInterval(function(){
 				}else{
 					for(var i=0; i<result.length; i++){
 //						var coinData = new autoCoinData(result[i].coin_name, result[i].buy, result[i].sell, result[i].time, result[i].buy_price, result[i].sell_amount, result[i].bit_secret_key, result[i].bit_api_key, result[i].status);
-						var coinData = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].is_before_data);
+						var coinData = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].sell);
 						setUserDataArray(coinData);
 					}
 					
@@ -133,7 +133,7 @@ function setUserDataArray(data){
 		_arrayUsers.push(data);	
 	}else{
 		for(var i=0; i<_arrayUsers.length; i++){
-			if(_arrayUsers[i].getUserId() == data.getUserId() && _arrayUsers[i].getCoinName() == data.getCoinName() && _arrayUsers[i].getIsBefore() == data.getIsBefore()){
+			if(_arrayUsers[i].getUserId() == data.getUserId() && _arrayUsers[i].getCoinName() == data.getCoinName()){
 				_arrayUsers[i] = data;
 			}else{
 				_arrayUsers.push(data);

@@ -93,17 +93,17 @@ exports.selectAutoTrade = function(userId, callback){
 	select(query, callback);
 }
 
-exports.saveAutoTrade = function(userId, coinName, buy, status, amount, isBefore, callback){
-	var query = "SELECT * FROM auto_trade WHERE user_id='"+userId +"' AND coin_name='" + coinName +"' AND is_before_data="+isBefore+";";
+exports.saveAutoTrade = function(userId, coinName, buy, sell, amount, status, callback){
+	var query = "SELECT * FROM auto_trade WHERE user_id='"+userId +"' AND coin_name='" + coinName +"';";
 	select(query, function(err, result){
 		if(err){
 			callback(err, null);
 		}else{
 			if(result == ''){
-				query = "(user_id, coin_name, buy, status, amount) VALUE ('" + userId +"','" + coinName + "'," + buy + ","+status+ ",'"+amount+"')";
+				query = "(user_id, coin_name, buy, status, amount, sell) VALUE ('"+userId+"','"+coinName+"',"+buy+","+status+","+amount+","+sell+");";
 				insert('auto_trade', query, callback);
 			}else{
-				query = "buy="+buy+",status="+status+",amount='"+amount+"' WHERE user_id='"+userId+"' AND coin_name='"+coinName+"';";
+				query = "sell="+sell+",buy="+buy+",status="+status+",amount='"+amount+"' WHERE user_id='"+userId+"' AND coin_name='"+coinName+"';";
 				update('auto_trade', query, callback);
 			}
 		}
@@ -115,8 +115,8 @@ exports.updateAutoTradeStatus = function(userId, coinName, status, callback){
 	update('auto_trade', query, callback);
 }
 
-exports.removeAutoTrade = function(userId, coinName, isBefore, callback){
-	var query = "user_id='"+userId+"' AND coin_name='"+coinName+"' AND is_before_data="+isBefore+";";
+exports.removeAutoTrade = function(userId, coinName, callback){
+	var query = "user_id='"+userId+"' AND coin_name='"+coinName+"';";
 	remove('auto_trade', query, callback);
 }
 

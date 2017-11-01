@@ -58,13 +58,12 @@ function bithumbUserAPI(apiKey, secretKey){
 	this.apiUrl = 'https://api.bithumb.com';
 	this.api_key = apiKey;
 	this.api_secret = secretKey;
-	console.log('Xcoinapi -- ');
 };
 
 var proto = bithumbUserAPI.prototype;
 
 proto.apiCall = function(endPoint, params, callback){
-	console.log('Xcoinapi -- apiCall ');
+	console.log('Xcoinapi -- apiCall // '+ endPoint +' : ' + JSON.stringify(params));
 	
 	var rgParams = {
 		'endPoint' : endPoint
@@ -80,6 +79,7 @@ proto.apiCall = function(endPoint, params, callback){
 	var httpHeaders = this._getHttpHeaders(endPoint, rgParams, this.api_key, this.api_secret);
 	
 	var rgResult = this.request(api_host, 'POST', rgParams, httpHeaders, callback);
+	console.log('header : '+ JSON.stringify(httpHeaders));
 }
 
 proto.request = function(strHost, strMethod, rgParams, httpHeaders, callback) {
@@ -113,7 +113,8 @@ proto.request = function(strHost, strMethod, rgParams, httpHeaders, callback) {
 
 proto._getHttpHeaders = function(endPoint, rgParams, api_key, api_secret) {
 	var strData	= http_build_query(rgParams);
-	var nNonce = this.usecTime();
+	var nNonce = this.usecTime() - 176201;
+
 	return {
 		'Api-Key' : api_key,
 		'Api-Sign' : (base64_encode(CryptoJS.HmacSHA512(endPoint + chr(0) + strData + chr(0) + nNonce, api_secret).toString())),

@@ -67,43 +67,64 @@
 		<script type="text/javascript">
 			function onSave(coinName, index){
 				console.log('on name : ' + coinName + ' index : ' + index);
-				var ant = $('#text_amount_'+index).val();
-				var pattern = /[0-9%]/;
-				var isPercent = false;
 				
-				if(ant == null || ant.length == 0 || ant == 0){
-					alert('입력값 확인');
+				var buy = $('#text_buy_'+index).val();
+				var sell = $('#text_sell_'+index).val();
+				var ant = $('#text_amount_'+index).val();
+				var pattern = /[0-9]/;
+
+				var buyCheck = false;
+				var sellCheck = false;
+				var amountCheck = false;
+				
+				if(buy == null || buy.length == 0 || buy == 0){
+					alert('구매 가격 확인필요.');
+					return;
+				}else if(sell == null || sell.length == 0 || sell == 0){
+					alert('판매 가격 확인필요.');
+					return;
+				}else if(ant == null || ant.length == 0){
+					alert('수량 값 확인필요.');
 					return;
 				}else{
-					for(var i=0; i<ant.length; i++){
-						if( pattern.test(ant.charAt(i)) == false){
-							alert('숫자와 퍼센트만 입력 가능함.');
+					
+					for(var i=0; i<buy.length; i++){
+						if( pattern.test(buy.charAt(i)) == false ){
+							alert('구매 입력값 확인필요.');
 							return;
-						}else if(ant.charAt(i) == '%'){
-							isPercent = true;
+						}
+						if(i == buy.length-1){
+							buyCheck = true;
+						}
+					}
+
+					for(var i=0; i<sell.length; i++){
+						if( pattern.test(sell.charAt(i)) == false ){
+							alert('판매 입력값 확인필요.');
+							return;
+						}
+						if(i==sell.length-1){
+							sellCheck = true;
+						}
+					}
+
+					for(var i=0; i<ant.length; i++){
+						if( pattern.test(ant.charAt(i)) == false ){
+							alert('수량 입력값 확인필요.');
+							return;
+						}
+
+						if(i == ant.length-1){
+							amountCheck = true;
 						}
 					}
 				}
-				
-				if( isPercent == true ){
-					var number = ant.replace('%', '');
-					if(number > 100 || number < 1){
-						alert('퍼센트 값은 1~100 까지 설정가능');
-						return; 
-					}
-				}else{
-					if(ant <= 0){
-						alert('최소 1개 이상 설정해야합니다.');
-						return;
-					}
-				}
-				
-				console.log('ant : ' + ant);
-				
-				$.ajax({
+
+				if(amountCheck && buyCheck && sellCheck){
+					$.ajax({
 					url:"/main/addAuto",
 					type:"POST",
-					data:{coin_name:coinName, amount:ant},
+					data:{coin_name:coinName, buy_price:buy, sell_price:sell, amount:ant},
 					dataType:"json",
 					success:function(result){
 						if(result.isSuccess == true){
@@ -114,6 +135,8 @@
 						}
 					}
 				});
+				}
+				
 			}
 			
 			function onCancle(coinName, index){
@@ -126,6 +149,8 @@
 						success:function(resultAuto){
 							if(resultAuto.isSuccess == true){
 								$('#text_amount_'+index).val(0);
+								$('#text_buy_'+index).val(0);
+								$('#text_sell_'+index).val(0);
 								$('#coin_row_'+index).css('background-color','#FFFFFF');
 								alert('삭제됨.');
 							}else{
@@ -168,8 +193,10 @@
 			
 			<ul class="header">
 				<li style="width:80px;">코인명</li>
-				<li style="width:120px;">현제가격</li>
-				<li style="width:100px;">수량(갯수 or %)</li>
+				<li style="width:80px;">현제가격</li>
+				<li style="width:80px;">구매가격</li>
+				<li style="width:80px;">판매가격</li>
+				<li style="width:80px;">수량</li>
 				<li style="width:65px;">설정</li>
 				<li class="end" style="width:65px;">취소</li>
 			</ul>
@@ -177,18 +204,20 @@
 			<% for(var i=0; i<arrayPrice.length; i++){ 
 				if(dicSettingCoin[arrayPrice[i].getCoinName()] != null){
 			%>
-				<ul class="body" id="coin_row_<%=i %>" style="background-color:#6799FF; width:437px; height:30px;">
+				<ul class="body" id="coin_row_<%=i %>" style="background-color:#6799FF; width:538px; height:30px;">
 			<%	}else{ %>
-				<ul class="body" id="coin_row_<%=i %>" style="background-color:#FFFFFF; width:437px; height:30px;">
+				<ul class="body" id="coin_row_<%=i %>" style="background-color:#FFFFFF; width:538px; height:30px;">
 			<%	} %>
 					<li class="body_data" style="width:80px;"><%= arrayPrice[i].getCoinNameKor() %></li>
-					<li class="money" style="width:120px;"><%= Number(arrayPrice[i].getPrice()).toLocaleString('en') %> &nbsp;&nbsp;</li>
-					<li class="body_data" style="width:100px;"><input type="text" id="text_amount_<%= i %>" name="text_amount_<%=i %>" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getAmount() %>" size=8> &nbsp;&nbsp;</li>
+					<li class="money" style="width:80px;"><%= Number(arrayPrice[i].getPrice()).toLocaleString('en') %> &nbsp;&nbsp;</li>
+					<li class="money" style="width:80px;"><input type="text" id="text_buy_<%= i %>" name="text_amount_<%=i %>" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getBuy() %>" size=8> &nbsp;&nbsp;</li>
+					<li class="money" style="width:80px;"><input type="text" id="text_sell_<%= i %>" name="text_amount_<%=i %>" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getSell() %>" size=8> &nbsp;&nbsp;</li>
+					<li class="body_data" style="width:80px;"><input type="text" id="text_amount_<%= i %>" name="text_amount_<%=i %>" value="<%= dicSettingCoin[arrayPrice[i].getCoinName()] == null ? 0 : dicSettingCoin[arrayPrice[i].getCoinName()].getAmount() %>" size=8> &nbsp;&nbsp;</li>
 					<li class="body_data" style="width:65px;">
-						<input type="button" id='buy_<%=i%>' value="start" onclick="onSave('<%= arrayPrice[i].getCoinName()%>', <%=i%>);">
+						<input type="button" id='buy_<%=i%>' value="저장" onclick="onSave('<%= arrayPrice[i].getCoinName()%>', <%=i%>);">
 					</li>
 					<li class="end body_data" style="width:65px;">
-						<input type="button" id='cancle_<%=i%>' value="cancle" onclick="onCancle('<%= arrayPrice[i].getCoinName()%>', <%=i%>);">
+						<input type="button" id='cancle_<%=i%>' value="취소" onclick="onCancle('<%= arrayPrice[i].getCoinName()%>', <%=i%>);">
 					</li> 
 				</ul>
 			<% } %>

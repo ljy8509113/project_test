@@ -36,9 +36,8 @@ exports.initMain = function(req, res, user_id, isFirst){
 						if(result != ''){
 							for(var i=0; i<result.length; i++){
 //								var data = new autoCoinData(result[i].coin_name, result[i].buy, result[i].sell, result[i].time, result[i].buy_amount, result[i].sell_amount, result[i].user_id, secret, api, result[i].status);
-								var data = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].is_before_data);
-								if(data.getIsBefore() == 0)
-									dicAutoCoin[result[i].coin_name] = data;
+								var data = new autoCoinData(result[i].coin_name, result[i].buy, result[i].user_id, secret, api, result[i].status, result[i].amount, result[i].sell);
+								dicAutoCoin[result[i].coin_name] = data;
 							}
 						}
 					}
@@ -125,13 +124,15 @@ router.all('/', function(req, res) {
 router.post('/addAuto',function(req, res){
 	var name = req.body.coin_name;
 	var amount = req.body.amount;
+	var buy = req.body.buy_price;
+	var sell = req.body.sell_price;
 	
-	query.saveAutoTrade(userData.getUserId(), name, 0, 0, amount, 0, function(err, result){
+	query.saveAutoTrade(userData.getUserId(), name, buy, sell, amount, 0, function(err, result){
 		if(err){
 			var message = JSON.stringify(err);
 			res.send({isSuccess:false, msg:message});
 		}else{			
-			var data = new autoCoinData(name, 0, userData.getUserId(), userData.getBitSecret(), userData.getBitApi(), 0, amount, 0);
+			var data = new autoCoinData(name, buy, userData.getUserId(), userData.getBitSecret(), userData.getBitApi(), 0, amount, sell);
 			dicAutoCoin[name] = data;
 //			auto.updateData(data);
 			res.send({isSuccess:true, resultData:data});
@@ -165,8 +166,7 @@ router.all('/removeAuto', function(req, res){
 	if(dicAutoCoin[name] == null){
 		res.send({isSuccess:false, msg:'설정되지 않은 코인'});
 	}else{
-//		query.removeCoinTrade(userData.getUserId(), name, function(err, result){
-		query.removeAutoTrade(userData.getUserId(), name, 0, function(err, result){
+		query.removeAutoTrade(userData.getUserId(), name, function(err, result){
 			if(err){
 				var message = JSON.stringify(err);
 				res.send({isSuccess:false, msg:message});
